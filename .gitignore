@@ -1,0 +1,6 @@
+# Dependency
+/node_modules
+
+# Webstorm IDE
+.idea/*
+
