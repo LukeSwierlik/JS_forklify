@@ -4,5 +4,7 @@ export const selectors = {
     SEARCH_RESULT_LIST: '.results__list',
     SEARCH_RESULTS: '.results',
     LOADER: '.loader',
-    SEARCH_RESULTS_PAGES: '.results__pages'
+    SEARCH_RESULTS_PAGES: '.results__pages',
+    RECIPE: '.recipe',
+    SHOPPING_LIST: '.shopping__list'
 };

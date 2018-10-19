@@ -11,6 +11,19 @@ export const clearResults = () => {
     elements.searchResPages.innerHTML = '';
 };
 
+export const highlightSelected = (id) => {
+    const resultsList = Array.from(document.querySelectorAll('.results__link'));
+
+    resultsList.forEach(element => {
+        element.classList.remove('results__link--active');
+    });
+
+    document
+        .querySelector(`a[href="#${id}"]`)
+        .classList
+        .add('results__link--active');
+};
+
 const limitRecipeTitle = (title, limit = 17) => {
     const newTitle = [];
 
@@ -95,6 +108,8 @@ export const renderResults = (recipes, page = 1, resPerPage = 10) => {
     // render results of current page
     const start = (page - 1) * resPerPage;
     const end = page * resPerPage;
+
+    console.log('[renderResults] recipes', recipes);
 
     recipes
         .slice(start, end)

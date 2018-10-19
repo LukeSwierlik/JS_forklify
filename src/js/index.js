@@ -1,7 +1,10 @@
 // Global app controller
 import Search from './models/Search';
 import Recipe from './models/Recipe';
+import ShoppingList from './models/ShoppingList';
 import * as searchView from './views/searchView';
+import * as reciveView from './views/recipeView';
+import * as shoppingListView from './views/shoppingListView';
 import { elements, renderLoader, clearLoader } from "./views/base";
 
 /** Global state of the app
@@ -9,18 +12,16 @@ import { elements, renderLoader, clearLoader } from "./views/base";
  *  Current recipe object
  *  Shopping list object
  *  Liked recipes
- * @type {Search}
  */
 const state = {
-    search: {},
-    recipe: {}
+    search: null,
+    recipe: null,
+    shoppingList: null
 };
 
 /**
  * SEARCH CONTROLLER
- * @returns {Promise<void>}
  */
-
 const controlSearch = async () => {
     // 1. Get query from view
     const query = searchView.getInput();
@@ -32,14 +33,22 @@ const controlSearch = async () => {
         // 3. Prepare UI for results
         searchView.clearInput();
         searchView.clearResults();
+
         renderLoader(elements.searchResults);
 
-        // 4. Search for recipes
-        await state.search.getResults();
+        try {
+            // 4. Search for recipes
+            await state.search.getResults();
 
-        // 5. Render results on UI
-        clearLoader();
-        searchView.renderResults(state.search.recipes);
+            // 5. Render results on UI
+            clearLoader();
+            console.log('state.search', state.search);
+
+            searchView.renderResults(state.search.recipes);
+        } catch (err) {
+            console.log('[controlSearch] err', err);
+            clearLoader();
+        }
     }
 };
 
@@ -74,21 +83,89 @@ const controlRecipe = async () => {
 
     if(id) {
         // 1.Prepare UI for changes.
+        reciveView.clearRecipe();
+        renderLoader(elements.recipe);
+
+        // Highlight selected search item
+        if(state.recipe) {
+            searchView.highlightSelected(id);
+        }
 
         // 2. Create new recipe object.
         state.recipe = new Recipe(id);
 
-        // 3. Get recipe data.
-        await state.recipe.getRecipe();
+        try {
+            // 3. Get recipe data.
+            await state.recipe.getRecipe();
+            state.recipe.parseIngredients();
 
-        // 4. Calculate servings and time.
-        state.recipe.calcTime();
-        state.recipe.calcServings();
+            // 4. Calculate servings and time.
+            state.recipe.calcTime();
+            state.recipe.calcServings();
 
-        // 5. Render recipe.
+            // 5. Render recipe.
+            clearLoader();
+            reciveView.renderRecipe(state.recipe);
+        } catch (err) {
+            console.log('[controlRecipe] err', err);
+        }
     }
 };
 
 ['hashchange', 'load'].forEach(type =>
     window.addEventListener(type, controlRecipe)
 );
+
+
+/**
+ * SHOPPING LIST CONTROLLER
+ */
+const controlShoppingList = () => {
+    // Create a new list IF there in none yet
+    if(!state.shoppingList) {
+        state.shoppingList = new ShoppingList();
+    }
+
+    // Add each ingredient to the shopping list and UI
+    state.recipe.ingredients.forEach(({ count, unit, ingredient }) => {
+        const item = state.shoppingList.addItem(count, unit, ingredient);
+
+        shoppingListView.renderShoppingListItem(item);
+    });
+};
+
+// Handle delete and update list item events
+elements.shoppingList.addEventListener('click', (event) => {
+    const id = event.target.closest('.shopping__item').dataset.itemId;
+
+    // Handle the delete button
+    if(event.target.matches('.shopping__delete, .shopping_delete *')) {
+        // Delete from state
+        state.list.deleteItem(id);
+
+        // Delete from UI
+        shoppingListView.deleteItem(id);
+    } else if(event.target.matches('.shopping__count-value')) {
+        const value = parseFloat(event.target.value);
+
+        state.shoppingList.updateCount(id, value);
+    }
+});
+
+
+// Handling recipe button clicks
+elements.recipe.addEventListener('click', (event) => {
+    if(event.target.matches('.btn-decrease, .btn-decrease *')) {
+        // Decrease button is clicked
+        if(state.recipe.servings > 1) {
+            state.recipe.updateServings('dec');
+            reciveView.updateServingsIngredients(state.recipe);
+        }
+    } else if(event.target.matches('.btn-increase, .btn-increase *')) {
+        // Increase button is clicked
+        state.recipe.updateServings('inc');
+        reciveView.updateServingsIngredients(state.recipe);
+    } else if(event.target.matches('.recipe__btn--add, .recipe__btn--add *')) {
+        controlShoppingList();
+    }
+});

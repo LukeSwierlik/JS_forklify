@@ -3,26 +3,19 @@ import { proxy, key } from "../config";
 
 class Search {
     constructor(query) {
-        this._recipes = [];
-        this._query = query;
-    }
-
-    get recipes() {
-        return this._recipes;
-    }
-
-    set recipes(value) {
-        this._recipes = value;
+        this.recipes = [];
+        this.query = query;
     }
 
     async getResults() {
-        const urlFood = `https://www.food2fork.com/api/search?key=${key}&q=${this._query}`;
+        const urlFood = `https://www.food2fork.com/api/search?key=${key}&q=${this.query}`;
         const url = `${proxy}${urlFood}`;
 
          await axios
             .get(url)
             .then(({ data }) => {
                 const { recipes } = data;
+                console.log('data', data);
 
                 this.recipes = recipes;
             })

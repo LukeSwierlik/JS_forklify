@@ -10,7 +10,9 @@ export const elements = {
     searchResultList: documentQuerySelector(selectors.SEARCH_RESULT_LIST),
     searchResults: documentQuerySelector(selectors.SEARCH_RESULTS),
     loaderElement: documentQuerySelector(selectors.LOADER),
-    searchResPages: documentQuerySelector(selectors.SEARCH_RESULTS_PAGES)
+    searchResPages: documentQuerySelector(selectors.SEARCH_RESULTS_PAGES),
+    recipe: documentQuerySelector(selectors.RECIPE),
+    shoppingList: documentQuerySelector(selectors.SHOPPING_LIST)
 };
 
 export const renderLoader = (parent) => {
