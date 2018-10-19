@@ -6,5 +6,7 @@ export const selectors = {
     LOADER: '.loader',
     SEARCH_RESULTS_PAGES: '.results__pages',
     RECIPE: '.recipe',
-    SHOPPING_LIST: '.shopping__list'
+    SHOPPING_LIST: '.shopping__list',
+    LIKES_FIELD: '.likes__field',
+    LIKES_LIST: '.likes__list'
 };

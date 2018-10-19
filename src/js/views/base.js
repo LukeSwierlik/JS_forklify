@@ -12,7 +12,9 @@ export const elements = {
     loaderElement: documentQuerySelector(selectors.LOADER),
     searchResPages: documentQuerySelector(selectors.SEARCH_RESULTS_PAGES),
     recipe: documentQuerySelector(selectors.RECIPE),
-    shoppingList: documentQuerySelector(selectors.SHOPPING_LIST)
+    shoppingList: documentQuerySelector(selectors.SHOPPING_LIST),
+    likesField: documentQuerySelector(selectors.LIKES_FIELD),
+    likesList: documentQuerySelector(selectors.LIKES_LIST)
 };
 
 export const renderLoader = (parent) => {
