@@ -5,8 +5,9 @@ const formatCount = (count) => {
     if(count) {
         // Ex. count = 2.5 --> 5/2 --> 2 1/2
         // Ex. count = 0.5 --> 1/2
+        const newCount = Math.round(count * 10000) / 10000;
 
-        const [integer, decimal] = count
+        const [integer, decimal] = newCount
             .toString()
             .split('.')
             .map(value => parseInt(value, 10));
@@ -122,6 +123,7 @@ export const renderRecipe = (recipe, isLiked) => {
             
             <a class="btn-small recipe__btn" href="${recipe.source_url}" target="_blank">
                 <span>Directions</span>
+                
                 <svg class="search__icon">
                     <use href="img/icons.svg#icon-triangle-right"></use>
                 </svg>

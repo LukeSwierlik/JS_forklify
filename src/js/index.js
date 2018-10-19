@@ -9,6 +9,7 @@ import * as shoppingListView from './views/shoppingListView';
 import * as likesView from './views/likesView';
 import { elements, renderLoader, clearLoader } from "./views/base";
 
+
 /** Global state of the app
  *  Search obejct
  *  Current recipe object
@@ -21,6 +22,7 @@ const state = {
     shoppingList: null,
     likes: null
 };
+
 
 /**
  * SEARCH CONTROLLER
@@ -55,11 +57,13 @@ const controlSearch = async () => {
     }
 };
 
+
 elements.searchForm
     .addEventListener('submit', (event) => {
         event.preventDefault();
         controlSearch();
     });
+
 
 elements.searchResPages
     .addEventListener('click', (event) => {
@@ -115,6 +119,7 @@ const controlRecipe = async () => {
     }
 };
 
+
 ['hashchange', 'load'].forEach(type =>
     window.addEventListener(type, controlRecipe)
 );
@@ -137,6 +142,7 @@ const controlShoppingList = () => {
     });
 };
 
+
 // Handle delete and update list item events
 elements.shoppingList.addEventListener('click', (event) => {
     const id = event.target.closest('.shopping__item').dataset.itemId;
@@ -155,9 +161,6 @@ elements.shoppingList.addEventListener('click', (event) => {
     }
 });
 
-// TESTING
-state.likes = new Likes();
-likesView.toggleLikeField(state.likes.getCountLikes());
 
 /**
  * LIKES CONTROLLER
@@ -195,6 +198,21 @@ const controlLikes = () => {
 
     likesView.toggleLikeField(state.likes.getCountLikes());
 };
+
+
+// Restore liked recipes on page load
+window.addEventListener('load', () => {
+    state.likes = new Likes();
+
+    // Restore likes
+    state.likes.readStorage();
+
+    // Toggle like menu button
+    likesView.toggleLikeField(state.likes.getCountLikes());
+
+    // Render the existing likes
+    state.likes.likes.forEach(like => likesView.renderLike(like));
+});
 
 
 // Handling recipe button clicks

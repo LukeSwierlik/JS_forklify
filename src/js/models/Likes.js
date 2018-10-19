@@ -11,13 +11,17 @@ class Likes {
             image_url
         };
 
+        this.persistData();
+
         this.likes.push(like);
     }
 
     deleteLike(id) {
         const index = this.likes.findIndex(element => element.id === id);
 
-        return this.likes.splice(index, 1);
+        this.likes.splice(index, 1);
+
+        this.persistData();
     }
 
     isLiked(id) {
@@ -26,6 +30,19 @@ class Likes {
 
     getCountLikes() {
         return this.likes.length;
+    }
+
+    persistData() {
+        localStorage.setItem('likes', JSON.stringify(this.likes));
+    }
+
+    readStorage() {
+        const storageLikes = JSON.parse(localStorage.getItem('likes'));
+
+        // Restoring likes from the localStorage
+        if(storageLikes) {
+            this.likes = storageLikes;
+        }
     }
 }
 
